@@ -1,0 +1,23 @@
+{
+  "name": "price-buddy-api",
+  "version": "0.0.1",
+  "description": "API for price buddy",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.16.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/desmondmcnamee/price-buddy-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/desmondmcnamee/price-buddy-api/issues"
+  },
+  "homepage": "https://github.com/desmondmcnamee/price-buddy-api#readme"
+}
