@@ -7,7 +7,13 @@ const client = new Client({
   ssl: true,
 });
 
-await client.connect();
+client.connect()
+  .then(() => {
+    console.log('Connected to DB')
+  })
+  .catch(() => {
+    console.log('Failed to connect to DB')
+  })
 
 const PORT = process.env.PORT || 5000
 app.get('/', (req, res) => res.send('Welcome to Price Buddy!'))
