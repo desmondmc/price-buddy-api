@@ -2,6 +2,8 @@ const express = require('express')
 const app = express()
 const { Client } = require('pg');
 
+require('dotenv').config({ path: '.env' })
+
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
   ssl: true,
