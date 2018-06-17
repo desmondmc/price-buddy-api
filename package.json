@@ -9,6 +9,7 @@
   },
   "devDependencies": {},
   "scripts": {
+    "docs": "apidoc -i src/ -o apidoc/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
