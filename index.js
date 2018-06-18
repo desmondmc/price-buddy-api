@@ -6,8 +6,10 @@ const postLink = require('./src/handlers/postLink')
 require('dotenv').config({ path: '.env' })
 
 const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true,
+  connectionString: process.env.DATABASE_POSTGRES_URL,
+  //connectionString: process.env.DATABASE_URL,
+  ssl: false,
+  //ssl: process.env.DATABASE_SSL,
 });
 
 client.connect()
