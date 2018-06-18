@@ -12,10 +12,14 @@ const client = new Client({
   //ssl: process.env.DATABASE_SSL,
 });
 
+
 client.connect()
-  .then(() => {
-    console.log('Connected to DB')
-  })
+  .then(() => client.query('SELECT * FROM price'))
+    .then((result) => {
+      //just a simple test query
+      console.log(result.rows[0].amount)
+      client.end();
+    })
   .catch(() => {
     console.log('Failed to connect to DB')
   })
