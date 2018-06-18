@@ -20,8 +20,8 @@
  *     }
  */
 
-const signUp = (req, res) => {
+const signup = (req, res) => {
   console.log('Like totally posted a link')
 }
 
-module.exports = signUp;
+module.exports = signup;
