@@ -1,5 +1,5 @@
 const express = require('express')
-const { Client } = require('pg')
+const bodyParser = require('body-parser')
 const env = require('dotenv')
 const {
   deleteProduct,
@@ -12,33 +12,23 @@ const {
   signup,
 } = require('./src/handlers')
 
+const {
+  bodyCheck,
+  logger,
+} = require('./src/middlewears');
+
 env.config({ path: '.env' })
-
-const db = new Client({
-  connectionString: process.env.DATABASE_POSTGRES_URL,
-  //connectionString: process.env.DATABASE_URL,
-  ssl: false,
-  //ssl: process.env.DATABASE_SSL,
-});
-
-
-db.connect()
-  .then(() => db.query('SELECT * FROM price'))
-    .then((result) => {
-      //just a simple test query
-      console.log(result.rows[0].amount)
-      db.end();
-    })
-  .catch(() => {
-    console.log('Failed to connect to DB')
-  })
 
 const PORT = process.env.PORT || 5000
 const app = express()
+
+app.use(bodyParser.json())
+app.use(logger)
+
 app
   .get('/products', getUserProducts)
   .post('./login', login)
-  .post('/signup', signup)
+  .post('/signup', bodyCheck, signup)
   .post('/link', postLink)
   .post('/email-availability', emailAvailability)
   .post('/resend-confirmation-email', resendConfirmationEmail)
