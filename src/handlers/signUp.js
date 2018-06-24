@@ -10,6 +10,9 @@
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
+ *     {
+ *       "auth_token": "some_auth_token"
+ *     }
  *
  * @apiError EmailAlreadyExists The email provided already has an account
  *
@@ -59,7 +62,9 @@ const signup = async (req, res) => {
 
   // TODO If there is a product id, create a relationship between the product and 
 
-  res.send()
+  res.send({
+    auth_token: authToken,
+  })
 }
 
 const emailAlreadyExists = async (email) => {

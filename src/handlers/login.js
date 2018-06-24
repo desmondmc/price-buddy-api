@@ -26,8 +26,34 @@
  *     }
  */
 
-const login = (req, res) => {
-  console.log('ran login')
+const db = require('../db')
+const { verifyPassword } = require('../utils/salter')
+
+const login = async (req, res) => {
+  const { email, password: passwordAttempt } = req.body
+
+  const result = await db.query(`SELECT * FROM public.user where email='${email}'`);
+
+  if (result.rowCount <= 0) {
+    res.status(404).send({ error: 'InvalidEmailOrPassword' })
+    return
+  }
+
+  const {
+      auth_token,
+      password: savedPassword,
+      salt,
+      iterations,
+  } = result.rows[0]
+
+  if(!await verifyPassword(passwordAttempt, savedPassword, salt, iterations)) {
+    res.status(404).send({ error: 'InvalidEmailOrPassword' })
+    return
+  }
+
+  res.send({
+    auth_token,
+  })
 }
 
 module.exports = login;
