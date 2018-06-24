@@ -13,6 +13,11 @@ const saltPassword = async (password) => {
   };
 };
 
+const verifyPassword = async (passwordAttempt, savedHash, savedSalt, savedIterations) => {
+  const passwordAttemptHash = await hashPromise(passwordAttempt, savedSalt, savedIterations)
+  return savedHash == passwordAttemptHash;
+};
+
 const hashPromise = (password, salt, iterations) => new Promise((resolve, reject) => {
   crypto.pbkdf2(password, salt, iterations, 64, 'sha512', (err, derivedKey) => {
     if (err) {
@@ -26,4 +31,4 @@ const hashPromise = (password, salt, iterations) => new Promise((resolve, reject
   });
 })
 
-module.exports = { saltPassword };
+module.exports = { saltPassword, verifyPassword };

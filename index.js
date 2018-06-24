@@ -1,6 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const env = require('dotenv')
+
 const {
   deleteProduct,
   deleteUser,
@@ -17,8 +17,6 @@ const {
   logger,
 } = require('./src/middlewears');
 
-env.config({ path: '.env' })
-
 const PORT = process.env.PORT || 5000
 const app = express()
 
@@ -27,7 +25,7 @@ app.use(logger)
 
 app
   .get('/products', getUserProducts)
-  .post('./login', login)
+  .post('/login', login)
   .post('/signup', bodyCheck, signup)
   .post('/link', postLink)
   .post('/email-availability', emailAvailability)

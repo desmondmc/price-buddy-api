@@ -14,7 +14,7 @@
  * @apiError EmailAlreadyExists The email provided already has an account
  *
  * @apiErrorExample Error-Response:
- *     HTTP/1.1 404 Not Found
+ *     HTTP/1.1 409 Conflict
  *     {
  *       "error": "EmailAlreadyExists"
  *     }
@@ -28,15 +28,23 @@ const signup = async (req, res) => {
 
   if (!email || !password) {
     res.status(400).send('Missing email or password in request!')
+    return;
   }
 
-  await emailAlreadyExists(email)
+  if(await emailAlreadyExists(email)) {
+    res.status(409).send({ error: 'EmailAlreadyExists' })
+    return;
+  }
 
   const {
     salt,
     hash,
     iterations,
   } = await saltPassword(password);
+
+  // id, email, auth_token, registration_date, verified, password, salt, interations
+
+  // ALTER TABLE user ADD COLUMN salt text NOT NULL;
 
   // create a new user and store him in the database.
 

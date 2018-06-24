@@ -1,10 +1,11 @@
 const { Client } = require('pg');
+const env = require('dotenv')
+
+env.config({ path: '.env' })
 
 const db = new Client({
   connectionString: process.env.DATABASE_POSTGRES_URL,
-  //connectionString: 'postgresql://localhost/price_buddy?user=desmondmcnamee',
-  ssl: false,
-  //ssl: process.env.DATABASE_SSL,
+  ssl: (process.env.DATABASE_SSL === 'true'),
 });
 
 db.connect()
