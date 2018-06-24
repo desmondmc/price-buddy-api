@@ -11,7 +11,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "create-docs": "apidoc -i src/ -o apidoc/",
+    "create-docs": "apidoc -i src/handlers -o apidoc/",
     "docs": "open apidoc/index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
