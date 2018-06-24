@@ -21,10 +21,12 @@
  */
 
 const db = require('../db')
+const uuid = require('uuid/v4')
+const { now } = require('../utils/time')
 const { saltPassword } = require('../utils/salter')
 
 const signup = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password } = req.body
 
   if (!email || !password) {
     res.status(400).send('Missing email or password in request!')
@@ -40,23 +42,29 @@ const signup = async (req, res) => {
     salt,
     hash,
     iterations,
-  } = await saltPassword(password);
+  } = await saltPassword(password)
 
-  // id, email, auth_token, registration_date, verified, password, salt, interations
+  const id = uuid()
+  const authToken = uuid()
 
-  // ALTER TABLE user ADD COLUMN salt text NOT NULL;
+  const insertNewUser = 
+    `
+    INSERT INTO public.user 
+    (id, email, auth_token, registration_date, last_login_date, password, salt, iterations) 
+    VALUES 
+    ('${id}','${email}', '${authToken}', '${now()}', '${now()}', '${hash}', '${salt}', ${iterations})
+    `
 
-  // create a new user and store him in the database.
+  await db.query(insertNewUser)
 
-  // If there is a product id, create a relationship between the product and 
+  // TODO If there is a product id, create a relationship between the product and 
 
-  res.send(salt)
+  res.send()
 }
 
 const emailAlreadyExists = async (email) => {
-  // const result = await db.query(`SELECT * FROM user where email=${email}`)
-
-  return false;
+  const result = await db.query(`SELECT * FROM public.user where email='${email}'`)
+  return result.rowCount > 0;
 };
 
 module.exports = signup;
