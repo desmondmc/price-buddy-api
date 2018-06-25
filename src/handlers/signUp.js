@@ -23,8 +23,9 @@
  *     }
  */
 
-const db = require('../db')
 const uuid = require('uuid/v4')
+const moment = require('moment')
+const db = require('../db')
 const { now } = require('../utils/time')
 const { saltPassword } = require('../utils/salter')
 
@@ -49,13 +50,14 @@ const signup = async (req, res) => {
 
   const id = uuid()
   const authToken = uuid()
+  const now = moment().format();
 
   const insertNewUser = 
     `
     INSERT INTO public.user 
     (id, email, auth_token, registration_date, last_login_date, password, salt, iterations) 
     VALUES 
-    ('${id}','${email}', '${authToken}', '${now()}', '${now()}', '${hash}', '${salt}', ${iterations})
+    ('${id}','${email}', '${authToken}', '${now}', '${now}', '${hash}', '${salt}', ${iterations})
     `
 
   await db.query(insertNewUser)

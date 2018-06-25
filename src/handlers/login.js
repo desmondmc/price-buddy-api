@@ -26,13 +26,14 @@
  *     }
  */
 
+const moment = require('moment')
 const db = require('../db')
 const { verifyPassword } = require('../utils/salter')
 
 const login = async (req, res) => {
   const { email, password: passwordAttempt } = req.body
 
-  const result = await db.query(`SELECT * FROM public.user where email='${email}'`);
+  const result = await db.query(`SELECT * FROM public.user WHERE email='${email}'`);
 
   if (result.rowCount <= 0) {
     res.status(404).send({ error: 'InvalidEmailOrPassword' })
@@ -50,6 +51,14 @@ const login = async (req, res) => {
     res.status(404).send({ error: 'InvalidEmailOrPassword' })
     return
   }
+
+  const now = moment().format();
+  await db.query(
+    `
+    UPDATE "public"."user" 
+    SET "last_login_date" = '${now}' WHERE email='${email}'
+    `
+  )
 
   res.send({
     auth_token,
