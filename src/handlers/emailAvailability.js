@@ -15,8 +15,21 @@
  *
  */
 
-const emailAvailability = (req, res) => {
-  console.log('ran emailAvailability')
+const db = require('../db')
+
+const emailAvailability = async (req, res) => {
+  const { email } = req.body
+
+  const result = await db.query(
+    `
+    SELECT * FROM public.user
+    WHERE email='${email}'
+    `
+  );
+
+  res.send({
+    is_available: result.rowCount === 0,
+  });
 }
 
 module.exports = emailAvailability;
