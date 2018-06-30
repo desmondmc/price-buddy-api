@@ -18,8 +18,19 @@
  *     }
  */
 
-const deleteUser = (req, res) => {
-  console.log('ran delete user')
+const db = require('../db')
+
+const deleteUser = async (req, res) => {
+  const { auth_token } = req.body
+
+  await db.query(
+    `
+    DELETE FROM public.user
+    WHERE auth_token='${auth_token}'
+    `
+  );
+
+  res.send();
 }
 
 module.exports = deleteUser;
