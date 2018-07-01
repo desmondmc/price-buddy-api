@@ -26,7 +26,6 @@
 const uuid = require('uuid/v4')
 const moment = require('moment')
 const db = require('../db')
-const { now } = require('../utils/time')
 const { saltPassword } = require('../utils/salter')
 
 const signup = async (req, res) => {
@@ -50,7 +49,7 @@ const signup = async (req, res) => {
 
   const id = uuid()
   const authToken = uuid()
-  const now = moment().format();
+  const now = moment().format()
 
   const insertNewUser = 
     `

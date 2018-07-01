@@ -26,11 +26,14 @@
  *     }
  */
 
-const util = require('util');
-const exec = util.promisify(require('child_process').exec);
+const uuid = require('uuid/v4')
+const moment = require('moment')
+const util = require('util')
+const exec = util.promisify(require('child_process').exec)
+const db = require('../db')
 
 const postLink = async (req, res) => {
-  const { link } = req.body;
+  const { link, auth_token } = req.body;
 
   try {
     const { stdout, stderr } = await exec(`node ./src/parser/index.js ${link}`);
@@ -40,6 +43,11 @@ const postLink = async (req, res) => {
       return;
     }
 
+    let userId;
+    if (auth_token) { 
+      userId = await _fetchUserIdForAuthToken(auth_token);
+    }
+
     const { 
       image,
       name,
@@ -47,12 +55,65 @@ const postLink = async (req, res) => {
       currency,
       shop,
       url
-    } = JSON.parse(stdout);
+    } = JSON.parse(stdout)
 
-    res.send()
-  } catch(_) {
+    const productId = uuid()
+    const priceId = uuid()
+    const userProductMappingId = uuid()
+    
+    const now = moment().format()
+
+    const insertProduct = 
+    `
+      INSERT INTO product 
+      (id, name, url, image, shop) 
+      VALUES 
+      ('${productId}','${name}', '${url}', '${image}', '${shop}');
+    `
+
+    const insertPrice = 
+    `
+      INSERT INTO price
+      (id, amount, currency, created, product_id) 
+      VALUES 
+      ('${priceId}','${amount}', '${currency}', '${now}', '${productId}');
+    `
+
+    const insertUserProductMapping =
+    `
+      INSERT INTO user_product_mapping
+      (id, user_id, product_id, created) 
+      VALUES 
+      ('${userProductMappingId}','${userId}', '${productId}', '${now}');
+    `
+
+    const query = userId 
+      ? `${insertProduct}${insertPrice}${insertUserProductMapping}`
+      : `${insertProduct}${insertPrice}`
+
+    await db.query(query)
+
+    res.send({ product_id: productId })
+  } catch(e) {
+    console.log('Error saving link: ', e);
     res.status(500).send({ error: 'ShopRequestFailure' })
   }
+}
+
+const _fetchUserIdForAuthToken = async (authToken) => {
+  const findUser = 
+  `
+    SELECT * FROM public.user
+    WHERE auth_token='${authToken}';
+  `
+
+  const result = await db.query(findUser)
+
+  if (result.rowCount <= 0) {
+    return null;
+  }
+
+  return result.rows[0].id;
 }
 
 module.exports = postLink;
