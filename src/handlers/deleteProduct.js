@@ -20,8 +20,17 @@
  *     }
  */
 
-const deleteProduct = (req, res) => {
-  console.log('ran login')
+const deleteProduct = async (req, res) => {
+  const { product_id } = req.body
+
+  await db.query(
+    `
+    DELETE FROM product
+    WHERE id='${product_id}'
+    `
+  );
+
+  res.send();
 }
 
 module.exports = deleteProduct;

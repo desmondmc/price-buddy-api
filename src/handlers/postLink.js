@@ -17,6 +17,7 @@
  * @apiError UnsupportedShop The link was a shop that we don't support
  * @apiError UnparseableLink The passed link was unparseable
  * @apiError Unauthorized auth_token was non null and invalid
+ * @apiError ShopRequestFailure the request to the shop failed
  *
  * @apiErrorExample Error-Response:
  *     HTTP/1.1 404 Not Found
@@ -25,8 +26,30 @@
  *     }
  */
 
-const postLink = (req, res) => {
-  console.log('Like totally posted a link')
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
+
+const postLink = async (req, res) => {
+  try {
+    const { stdout, stderr } = await exec('node ./some_file');
+    if (stderr) {
+      res.status(406).send({ error: 'UnparseableLink' })
+      return;
+    }
+
+    const {
+      name,
+      url,
+      image,
+      shop,
+      amount,
+      currency,
+    } = stdout;
+
+    
+  } catch {
+    res.status(500).send({ error: 'ShopRequestFailure' })
+  }
 }
 
 module.exports = postLink;
