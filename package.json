@@ -4,12 +4,12 @@
   "description": "API for price buddy",
   "main": "index.js",
   "dependencies": {
-  	"cheerio": "^1.0.0-rc.2",
-  	"request": "^2.87.0",
+    "cheerio": "^1.0.0-rc.2",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
     "moment": "^2.22.2",
     "pg": "^7.4.3",
+    "request": "^2.87.0",
     "uuid": "^3.2.1"
   },
   "devDependencies": {},

@@ -4,7 +4,7 @@
  * @apiGroup Link
  *
  * @apiParam {String} [auth_token]  Optional token sent if user is logged in.
- * @apiParam {String} link  Url of the product.
+ * @apiParam {String} link Url of the product.
  *
  * @apiSuccess {String} product_id
  *
@@ -30,24 +30,27 @@ const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 
 const postLink = async (req, res) => {
+  const { link } = req.body;
+
   try {
-    const { stdout, stderr } = await exec('node ./some_file');
+    const { stdout, stderr } = await exec(`node ./src/parser/index.js ${link}`);
+    
     if (stderr) {
       res.status(406).send({ error: 'UnparseableLink' })
       return;
     }
 
-    const {
-      name,
-      url,
+    const { 
       image,
-      shop,
+      name,
       amount,
       currency,
-    } = stdout;
+      shop,
+      url
+    } = JSON.parse(stdout);
 
-    
-  } catch {
+    res.send()
+  } catch(_) {
     res.status(500).send({ error: 'ShopRequestFailure' })
   }
 }

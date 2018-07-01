@@ -60,7 +60,8 @@ const parse = (url) => {
         })
 
       }
-      console.log(parsed_data);
+
+      console.log(JSON.stringify(parsed_data));
   })
 
 }
