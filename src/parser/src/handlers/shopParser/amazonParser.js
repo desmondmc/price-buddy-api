@@ -4,7 +4,8 @@ const cheerio = require('cheerio');
 const parseDomain = require('parse-domain');
 const currencyFormatter = require('currency-formatter');
 
-const imgID = 'data-old-hires';
+const imgID = '#landingImage';
+const imgAttribute = 'data-old-hires';
 const titleID = '#productTitle';
 const priceID = '#priceblock_ourprice';
 
@@ -49,7 +50,7 @@ const parse = (url) => {
 
       $(imgID).filter(function(){
         const data = $(this);
-        parsed_data.image=data.attr(imgID);
+        parsed_data.image=data.attr(imgAttribute);
         })
 
       }
