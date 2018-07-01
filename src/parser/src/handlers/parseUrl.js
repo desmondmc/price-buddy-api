@@ -3,16 +3,21 @@ const {
   OttoParser,
 } = require('./shopParser')
 
-var url_string = require('url');
+const url_string = require('url');
 
 const parse = (url) => {
-  var q = url_string.parse(url, true);
-  var url_shop = q.host.replace('www.','');
-  var pathname = q.pathname;
-  var str_start = pathname.indexOf('/dp/');
-  var str_end = str_start+15;
-  var url_product = pathname.substring(str_start,str_end);
+  const q = url_string.parse(url, true);
+  const url_shop = q.host.replace('www.','');
+  const pathname = q.pathname;
+  if(pathname.includes('/gp/product/')){
+    var str_start = pathname.indexOf('/gp/product/');
+    var str_end = str_start+23;
+  }else{
+    var str_start = pathname.indexOf('/dp/');
+    var str_end = str_start+15;
+  }
 
+  const url_product = pathname.substring(str_start,str_end);
   AmazonParser(url_shop+url_product);
 }
 

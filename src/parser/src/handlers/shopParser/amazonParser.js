@@ -5,9 +5,12 @@ const parseDomain = require('parse-domain');
 const currencyFormatter = require('currency-formatter');
 
 const imgID = '#landingImage';
+const multipleImageID = '#imgBlkFront';
 const imgAttribute = 'data-old-hires';
+const multipleImgAttribute = 'src';//no alternative?
 const titleID = '#productTitle';
 const priceID = '#priceblock_ourprice';
+const multiplePriceClass = '.a-color-price';
 
 const currency_mapping = {
   "de" : "EUR",
@@ -34,7 +37,7 @@ const parse = (url) => {
   const url_string = 'https://www.'+url;
   const currency = get_currency (url_string);
   request(url_string, function (error, response, html) {
-     let parsed_data = { image : "", name : "", amount : "", currency : currency, shop: "Amazon", url };
+     var parsed_data = { image : "", name : "", amount : "", currency : currency, shop: "Amazon", url };
     if (!error && response.statusCode == 200) {
       var $ = cheerio.load(html);
 
@@ -45,7 +48,16 @@ const parse = (url) => {
 
       $(priceID).filter(function(){
         const data = $(this);
-        parsed_data.amount=currencyFormatter.unformat(data.text(),{code : currency});
+        //in case of on website price
+        if(data.text()){
+          parsed_data.amount=currencyFormatter.unformat(data.text(),{code : currency});
+        }else{
+          //multiple prices
+          $(multiplePriceClass).filter(function(){
+            const data = $(this);
+            parsed_data.amount=currencyFormatter.unformat(data.text(),{code : currency});
+          })
+        }
       })
 
       $(imgID).filter(function(){
