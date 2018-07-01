@@ -15,6 +15,7 @@ const {
 const {
   bodyCheck,
   logger,
+  authenticate,
 } = require('./src/middlewears');
 
 const PORT = process.env.PORT || 5000
@@ -24,13 +25,13 @@ app.use(bodyParser.json())
 app.use(logger)
 
 app
-  .get('/products', getUserProducts)
+  .get('/products', authenticate, getUserProducts)
   .post('/login', login)
   .post('/signup', bodyCheck, signup)
-  .post('/link', postLink)
+  .post('/link', authenticate, postLink)
   .post('/email-availability', emailAvailability)
   .post('/resend-confirmation-email', resendConfirmationEmail)
-  .delete('/user', deleteUser)
+  .delete('/user', authenticate, deleteUser)
   .delete('/product', deleteProduct)
 
 app.listen(PORT, () => console.log('Listening on port:', PORT))

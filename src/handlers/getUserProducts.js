@@ -29,8 +29,41 @@
  *     }
  */
 
-const getUserProducts = (req, res) => {
-  console.log('Like totally posted a link')
+const db = require('../db')
+
+const getUserProducts = async (req, res) => {
+  if (!req.userId) {
+    res.status(401).send('Unauthorized')
+    return
+  }
+
+  const userProducts = 
+  `
+    SELECT product.id, product.name, product.image, product.url, product.shop, price.amount, price.currency
+    FROM product
+    JOIN user_product_mapping
+    ON user_product_mapping.product_id=product.id
+    JOIN public.user
+    ON public.user.id=user_product_mapping.user_id
+    JOIN price
+    ON price.product_id=product.id
+    WHERE user_product_mapping.user_id='${req.userId}';
+  `
+
+  const result = await db.query(userProducts);
+
+  const responseObject = result.rows.map(r => ({
+    id: r.id,
+    name: r.name,
+    image: r.image,
+    url: r.url,
+    shop: r.shop,
+    amount: r.amount,
+    currency: r.currency,
+  }));
+
+  const jsonResponse = JSON.stringify(responseObject)
+  res.send(jsonResponse);
 }
 
 module.exports = getUserProducts;

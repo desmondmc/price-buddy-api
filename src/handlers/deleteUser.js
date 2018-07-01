@@ -21,12 +21,15 @@
 const db = require('../db')
 
 const deleteUser = async (req, res) => {
-  const { auth_token } = req.body
+  if (!req.userId) {
+    res.status(401).send('Unauthorized')
+    return
+  }
 
   await db.query(
     `
     DELETE FROM public.user
-    WHERE auth_token='${auth_token}'
+    WHERE id='${req.userId}'
     `
   );
 

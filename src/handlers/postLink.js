@@ -33,7 +33,7 @@ const exec = util.promisify(require('child_process').exec)
 const db = require('../db')
 
 const postLink = async (req, res) => {
-  const { link, auth_token } = req.body;
+  const { link } = req.body;
 
   try {
     const { stdout, stderr } = await exec(`node ./src/parser/index.js ${link}`);
@@ -41,11 +41,6 @@ const postLink = async (req, res) => {
     if (stderr) {
       res.status(406).send({ error: 'UnparseableLink' })
       return;
-    }
-
-    let userId;
-    if (auth_token) { 
-      userId = await _fetchUserIdForAuthToken(auth_token);
     }
 
     const { 
@@ -59,6 +54,7 @@ const postLink = async (req, res) => {
 
     const productId = uuid()
     const priceId = uuid()
+    const userId = req.userId
     const userProductMappingId = uuid()
     
     const now = moment().format()
@@ -87,7 +83,7 @@ const postLink = async (req, res) => {
       ('${userProductMappingId}','${userId}', '${productId}', '${now}');
     `
 
-    const query = userId 
+    const query = userId
       ? `${insertProduct}${insertPrice}${insertUserProductMapping}`
       : `${insertProduct}${insertPrice}`
 
@@ -98,22 +94,6 @@ const postLink = async (req, res) => {
     console.log('Error saving link: ', e);
     res.status(500).send({ error: 'ShopRequestFailure' })
   }
-}
-
-const _fetchUserIdForAuthToken = async (authToken) => {
-  const findUser = 
-  `
-    SELECT * FROM public.user
-    WHERE auth_token='${authToken}';
-  `
-
-  const result = await db.query(findUser)
-
-  if (result.rowCount <= 0) {
-    return null;
-  }
-
-  return result.rows[0].id;
 }
 
 module.exports = postLink;
