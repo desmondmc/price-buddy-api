@@ -3,22 +3,27 @@ const {
   OttoParser,
 } = require('./shopParser')
 
-const url_string = require('url');
+const url_module = require('url');
 
 const parse = (url) => {
-  const q = url_string.parse(url, true);
-  const url_shop = q.host.replace('www.','');
-  const pathname = q.pathname;
-  if(pathname.includes('/gp/product/')){
-    var str_start = pathname.indexOf('/gp/product/');
-    var str_end = str_start+23;
-  }else{
-    var str_start = pathname.indexOf('/dp/');
-    var str_end = str_start+15;
+  //if url doesn't contain https or http add it otherwise parse dont work
+  if(!url.includes("http")){
+    url = "https://"+url;
+  }
+  const q = url_module.parse(url, true);
+  const shop_name = q.hostname;
+  //can cause problems as well if someone has e.g. amazon as subdomain -> maybe find another library which gets just the name
+  if(shop_name.includes('amazon')){
+      AmazonParser(url);
+  }
+  else if(shop_name.includes('otto')){
+      OttoParser(url);
+  }
+  else{
+      console.log("this shop is not supported");
   }
 
-  const url_product = pathname.substring(str_start,str_end);
-  AmazonParser(url_shop+url_product);
+
 }
 
 module.exports = parse;

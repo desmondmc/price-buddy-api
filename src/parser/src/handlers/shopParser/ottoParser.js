@@ -1,53 +1,78 @@
-
-var request = require('request');
-var cheerio = require('cheerio');
+const request = require('request');
+const cheerio = require('cheerio');
+const parseDomain = require('parse-domain');
+const currencyFormatter = require('currency-formatter');
+const url_module = require('url');
+const fs = require('fs');
 
 var imgID = '#prd_mainProductImage';
 var titleClass = '.prd_shortInfo__text';
-var priceClass = '.prd_price__amount';
-//one element inside another
+var priceID = '#normalPriceAmount';
+var reducedPriceID = '#reducedPriceAmount';
 
-var OttoParser = function () {};
+const imgAttribute = 'src';
 
-function split_price_and_currency (price_and_currency){
-  //need improvement its not universal
-  var currency = price_and_currency.substring(0, 1);
-  var price = price_and_currency.substring(2);
-  return {
-    currency: currency,
-    price: price,
-  };
+const currency_mapping = {
+  "de" : "EUR"
 }
 
-OttoParser.prototype.parse = function () {
+function get_currency (url){
+  const tld = parseDomain(url).tld;
+  return currency_mapping[tld];
+}
 
+//for otto we need 3 parts the product id which is more or less its name and the variationid, we have to track if that works allways
+function clean_url (url){
+  const q = url_module.parse(url, true);
+  return q.protocol+"//www."+q.hostname.replace("www.","")+q.pathname+q.hash;
+}
 
-  request(this.url, function (error, response, html) {
-    var parsed_data = { img_src : "", name : "", price : "", currency : ""};
+const parse = (url) => {
+  const url_string = clean_url(url);
+  console.log(url_string);
+  const currency = get_currency (url_string);
+  request(url_string, function (error, response, html) {
+     var parsed_data = { image : "", name : "", amount : "", currency : currency, shop: "Otto", url_string };
+
+    /*fs.writeFile("test.html", html, function(err) {
+    if(err) {
+        return console.log(err);
+    }
+
+      console.log("The file was saved!");
+    });*/
+
     if (!error && response.statusCode == 200) {
       var $ = cheerio.load(html);
 
-      $(imgID).filter(function(){
-        var data = $(this);
-        //still getting something wrong, looks like image file header
-        parsed_data.img_src=base64_decode(str_replace('data:image/gif;base64,','',data.attr('src')));
-      })
-
       $(titleClass).filter(function(){
-        var data = $(this);
-        parsed_data.name=data.children().first().text().trim();
+        const data = $(this);
+        parsed_data.name=data.children('h1').text().trim();
       })
 
-      $(priceClass).filter(function(){
-        var data = $(this);
-        var price_and_currency = data.text().trim();
-        parsed_data.currency=split_price_and_currency(price_and_currency).currency;
-        parsed_data.price=split_price_and_currency(price_and_currency).price;
+      $(reducedPriceID).filter(function(){
+        const data = $(this);
+        parsed_data.amount=currencyFormatter.unformat(data.text(),{code : currency});
       })
-    }
-    console.log(parsed_data);
-  });
-};
 
+      //if the proce is not reduced
+      if(parsed_data.amount==""){
+          $(priceID).filter(function(){
+            const data = $(this);
+            parsed_data.amount=currencyFormatter.unformat(data.text(),{code : currency});
+          })
+      }
 
-module.exports = new OttoParser();
+      $(imgID).filter(function(){
+        const data = $(this);
+        parsed_data.image=data.attr(imgAttribute);
+        })
+
+      }
+
+      console.log(JSON.stringify(parsed_data));
+  })
+
+}
+
+module.exports = parse;
