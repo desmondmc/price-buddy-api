@@ -38,27 +38,17 @@ const currency_mapping = {
   "com" : "USD"
 }
 
-function get_currency (url){
+const get_currency = (url) =>{
   const tld = parseDomain(url).tld;
   return currency_mapping[tld];
 }
 
+const clean_url = (url) =>{
+  const q = url_module.parse(url, true);
+  return q.protocol+"//www."+q.hostname.replace("www.","")+q.pathname;
+}
+
 const parse = (url) => {
-
-
-  /*const q = url_module.parse(url, true);
-  const url_shop = q.host.replace('www.','');
-  const pathname = q.pathname;
-  if(pathname.includes('/gp/product/')){
-    var str_start = pathname.indexOf('/gp/product/');
-    var str_end = str_start+23;
-  }else{
-    var str_start = pathname.indexOf('/dp/');
-    var str_end = str_start+15;
-  }
-
-  const url_product = pathname.substring(str_start,str_end);*/
-
 
   //for amazon we need the product id, but maybe we can in general just cut the other get parameters out of the url
   const url_string = url;
@@ -108,4 +98,7 @@ const parse = (url) => {
 
 }
 
-module.exports = parse;
+module.exports = {
+  parse: parse,
+  cleanUrl: clean_url,
+};

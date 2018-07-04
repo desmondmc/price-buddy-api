@@ -22,14 +22,12 @@ function get_currency (url){
 }
 
 //for otto we need 3 parts the product id which is more or less its name and the variationid, we have to track if that works allways
-function clean_url (url){
+const clean_url = (url) => {
   const q = url_module.parse(url, true);
   return q.protocol+"//www."+q.hostname.replace("www.","")+q.pathname+q.hash;
 }
 
-const parse = (url) => {
-  const url_string = clean_url(url);
-  console.log(url_string);
+const parse = (url_string) => {
   const currency = get_currency (url_string);
   request(url_string, function (error, response, html) {
      var parsed_data = { image : "", name : "", amount : "", currency : currency, shop: "Otto", url_string };
@@ -75,4 +73,7 @@ const parse = (url) => {
 
 }
 
-module.exports = parse;
+module.exports = {
+  parse: parse,
+  cleanUrl: clean_url,
+};
