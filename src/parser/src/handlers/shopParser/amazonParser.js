@@ -25,6 +25,7 @@ const currency_mapping = {
   "de" : "EUR",
   "com.au" : "AUD",
   "com.br" : "BRL",
+  "co.uk" : "GBP",
   "cn" : "CNY",
   "fr" : "EUR",
   "ca" : "CAD",
