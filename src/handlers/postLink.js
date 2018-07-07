@@ -33,14 +33,14 @@ const exec = util.promisify(require('child_process').exec)
 const db = require('../db')
 
 const postLink = async (req, res) => {
-  const { link } = req.body;
+  const { link } = req.body
 
   try {
-    const { stdout, stderr } = await exec(`node ./src/parser/index.js ${link}`);
+    const { stdout, stderr } = await exec(`node ./src/parser/index.js ${link}`)
     
     if (stderr) {
       res.status(406).send({ error: 'UnparseableLink' })
-      return;
+      return
     }
 
     const { 
@@ -91,9 +91,9 @@ const postLink = async (req, res) => {
 
     res.send({ product_id: productId })
   } catch(e) {
-    console.log('Error saving link: ', e);
+    console.log('Error saving link: ', e)
     res.status(500).send({ error: 'ShopRequestFailure' })
   }
 }
 
-module.exports = postLink;
+module.exports = postLink

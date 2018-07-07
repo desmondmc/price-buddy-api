@@ -18,8 +18,8 @@
  *     }
  */
 
-const resendConfirmationEmail = (req, res) => {
+const resendConfirmationEmail = () => {
   console.log('Like totally posted a link')
 }
 
-module.exports = resendConfirmationEmail;
+module.exports = resendConfirmationEmail

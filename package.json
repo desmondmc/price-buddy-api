@@ -14,8 +14,12 @@
     "request": "^2.87.0",
     "uuid": "^3.2.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^5.0.1"
+  },
   "scripts": {
+    "lint": "eslint ./index.js ./src/**",
+    "lint-fix": "eslint --fix ./index.js ./src/**",
     "create-docs": "apidoc -i src/handlers -o apidoc/",
     "docs": "open apidoc/index.html",
     "test": "echo \"Error: no test specified\" && exit 1"

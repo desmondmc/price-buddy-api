@@ -33,7 +33,7 @@ const { verifyPassword } = require('../utils/salter')
 const login = async (req, res) => {
   const { email, password: passwordAttempt } = req.body
 
-  const result = await db.query(`SELECT * FROM public.user WHERE email='${email}'`);
+  const result = await db.query(`SELECT * FROM public.user WHERE email='${email}'`)
 
   if (result.rowCount <= 0) {
     res.status(404).send({ error: 'InvalidEmailOrPassword' })
@@ -41,10 +41,10 @@ const login = async (req, res) => {
   }
 
   const {
-      auth_token,
-      password: savedPassword,
-      salt,
-      iterations,
+    auth_token,
+    password: savedPassword,
+    salt,
+    iterations,
   } = result.rows[0]
 
   if(!await verifyPassword(passwordAttempt, savedPassword, salt, iterations)) {
@@ -52,7 +52,7 @@ const login = async (req, res) => {
     return
   }
 
-  const now = moment().format();
+  const now = moment().format()
   await db.query(
     `
     UPDATE "public"."user" 
@@ -65,4 +65,4 @@ const login = async (req, res) => {
   })
 }
 
-module.exports = login;
+module.exports = login

@@ -10,20 +10,20 @@ const priceID = '#priceblock_ourprice'
 const multiplePriceClass = '.a-color-price'
 
 const currencyMapping = {
-  "de" : "EUR",
-  "com.au" : "AUD",
-  "com.br" : "BRL",
-  "co.uk" : "GBP",
-  "cn" : "CNY",
-  "fr" : "EUR",
-  "ca" : "CAD",
-  "in" : "INR",
-  "it" : "EUR",
-  "com.mx" : "MXN",
-  "co.jp" : "JPY",
-  "nl" : "EUR",
-  "es" : "EUR",
-  "com" : "USD"
+  'de' : 'EUR',
+  'com.au' : 'AUD',
+  'com.br' : 'BRL',
+  'co.uk' : 'GBP',
+  'cn' : 'CNY',
+  'fr' : 'EUR',
+  'ca' : 'CAD',
+  'in' : 'INR',
+  'it' : 'EUR',
+  'com.mx' : 'MXN',
+  'co.jp' : 'JPY',
+  'nl' : 'EUR',
+  'es' : 'EUR',
+  'com' : 'USD'
 }
 
 const getCurrency = (url) =>{
@@ -36,9 +36,9 @@ const parse = (url) => {
   const url_string = url
   const currency = getCurrency(url_string)
   request(url_string, function (error, response, html) {
-     const parsed_data = { image : "", name : "", amount : "", currency : currency, shop: "Amazon", url }
+    const parsed_data = { image : '', name : '', amount : '', currency : currency, shop: 'Amazon', url }
     if (!error && response.statusCode == 200) {
-      var $ = cheerio.load(html)
+      const $ = cheerio.load(html)
 
       $(titleID).filter(() => {
         const data = $(this)
@@ -71,4 +71,4 @@ const parse = (url) => {
 
 }
 
-module.exports = parse;
+module.exports = parse

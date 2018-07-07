@@ -31,9 +31,9 @@ const deleteUser = async (req, res) => {
     DELETE FROM public.user
     WHERE id='${req.userId}'
     `
-  );
+  )
 
-  res.send();
+  res.send()
 }
 
-module.exports = deleteUser;
+module.exports = deleteUser

@@ -50,7 +50,7 @@ const getUserProducts = async (req, res) => {
     WHERE user_product_mapping.user_id='${req.userId}';
   `
 
-  const result = await db.query(userProducts);
+  const result = await db.query(userProducts)
 
   const responseObject = result.rows.map(r => ({
     id: r.id,
@@ -60,10 +60,10 @@ const getUserProducts = async (req, res) => {
     shop: r.shop,
     amount: r.amount,
     currency: r.currency,
-  }));
+  }))
 
   const jsonResponse = JSON.stringify(responseObject)
-  res.send(jsonResponse);
+  res.send(jsonResponse)
 }
 
-module.exports = getUserProducts;
+module.exports = getUserProducts

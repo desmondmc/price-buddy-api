@@ -19,20 +19,20 @@ const shopFromUrl = (url) => {
 
 const _checkDomainEnding = (domain,url) => {
   const supported_endings = [
-    ".de",
-    ".com.au",
-    ".com.br",
-    ".cn",
-    ".fr",
-    ".ca",
-    ".in",
-    ".it",
-    ".com.mx",
-    ".co.jp",
-    ".nl",
-    ".es",
-    ".com",
-    ".co.uk",
+    '.de',
+    '.com.au',
+    '.com.br',
+    '.cn',
+    '.fr',
+    '.ca',
+    '.in',
+    '.it',
+    '.com.mx',
+    '.co.jp',
+    '.nl',
+    '.es',
+    '.com',
+    '.co.uk',
   ]
 
   // important to get the last appearance

@@ -12,10 +12,10 @@ const authenticate = async (req, _, next) => {
   const result = await db.query(findUser)
 
   if (result.rowCount > 0) {
-    req.userId =  result.rows[0].id;
+    req.userId =  result.rows[0].id
   }
 
   next()
-};
+}
 
-module.exports = authenticate;
+module.exports = authenticate

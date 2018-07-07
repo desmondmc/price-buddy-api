@@ -25,11 +25,11 @@ const emailAvailability = async (req, res) => {
     SELECT * FROM public.user
     WHERE email='${email}'
     `
-  );
+  )
 
   res.send({
     is_available: result.rowCount === 0,
-  });
+  })
 }
 
-module.exports = emailAvailability;
+module.exports = emailAvailability

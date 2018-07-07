@@ -33,12 +33,12 @@ const signup = async (req, res) => {
 
   if (!email || !password) {
     res.status(400).send('Missing email or password in request!')
-    return;
+    return
   }
 
   if(await emailAlreadyExists(email)) {
     res.status(409).send({ error: 'EmailAlreadyExists' })
-    return;
+    return
   }
 
   const {
@@ -70,7 +70,7 @@ const signup = async (req, res) => {
 
 const emailAlreadyExists = async (email) => {
   const result = await db.query(`SELECT * FROM public.user where email='${email}'`)
-  return result.rowCount > 0;
-};
+  return result.rowCount > 0
+}
 
-module.exports = signup;
+module.exports = signup

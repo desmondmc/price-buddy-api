@@ -3,10 +3,10 @@ const cheerio = require('cheerio')
 const parseDomain = require('parse-domain')
 const currencyFormatter = require('currency-formatter')
 
-var imgID = '#prd_mainProductImage'
-var titleClass = '.prd_shortInfo__text'
-var priceID = '#normalPriceAmount'
-var reducedPriceID = '#reducedPriceAmount'
+const imgID = '#prd_mainProductImage'
+const titleClass = '.prd_shortInfo__text'
+const priceID = '#normalPriceAmount'
+const reducedPriceID = '#reducedPriceAmount'
 
 const imgAttribute = 'src'
 
@@ -20,12 +20,12 @@ function getCurrency (url){
 }
 
 const parse = (url_string) => {
-  const currency = getCurrency (url_string);
+  const currency = getCurrency (url_string)
   request(url_string, function (error, response, html) {
-     var parsed_data = { image : '', name : '', amount : '', currency : currency, shop: 'Otto', url_string }
+    const parsed_data = { image : '', name : '', amount : '', currency : currency, shop: 'Otto', url_string }
 
     if (!error && response.statusCode == 200) {
-      var $ = cheerio.load(html)
+      const $ = cheerio.load(html)
 
       $(titleClass).filter(() => {
         const data = $(this)
@@ -48,11 +48,11 @@ const parse = (url_string) => {
       $(imgID).filter(() => {
         const data = $(this)
         parsed_data.image=data.attr(imgAttribute)
-        })
+      })
 
-      }
+    }
 
-      console.log(JSON.stringify(parsed_data))
+    console.log(JSON.stringify(parsed_data))
   })
 }
 

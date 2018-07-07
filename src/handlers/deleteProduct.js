@@ -20,6 +20,8 @@
  *     }
  */
 
+const db = require('../db')
+
 const deleteProduct = async (req, res) => {
   const { product_id } = req.body
 
@@ -28,9 +30,9 @@ const deleteProduct = async (req, res) => {
     DELETE FROM product
     WHERE id='${product_id}'
     `
-  );
+  )
 
-  res.send();
+  res.send()
 }
 
-module.exports = deleteProduct;
+module.exports = deleteProduct

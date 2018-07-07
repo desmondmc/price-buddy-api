@@ -1,34 +1,51 @@
 const crypto = require('crypto')
 
-const saltPassword = async (password) => {
-  const salt = crypto.randomBytes(128).toString('base64');
-  const iterations = 10000;
-
+const saltPassword = async password => {
+  const salt = crypto.randomBytes(128).toString('base64')
+  const iterations = 10000
+  
   const hash = await hashPromise(password, salt, iterations)
 
   return {
     salt: salt,
     hash: hash,
-    iterations: iterations,
-  };
-};
+    iterations: iterations
+  }
+}
 
-const verifyPassword = async (passwordAttempt, savedHash, savedSalt, savedIterations) => {
-  const passwordAttemptHash = await hashPromise(passwordAttempt, savedSalt, savedIterations)
-  return savedHash == passwordAttemptHash;
-};
+const verifyPassword = async (
+  passwordAttempt,
+  savedHash,
+  savedSalt,
+  savedIterations
+) => {
+  const passwordAttemptHash = await hashPromise(
+    passwordAttempt,
+    savedSalt,
+    savedIterations
+  )
+  return savedHash == passwordAttemptHash
+}
 
-const hashPromise = (password, salt, iterations) => new Promise((resolve, reject) => {
-  crypto.pbkdf2(password, salt, iterations, 64, 'sha512', (err, derivedKey) => {
-    if (err) {
-      reject(err);
-      return;
-    }
+const hashPromise = (password, salt, iterations) =>
+  new Promise((resolve, reject) => {
+    crypto.pbkdf2(
+      password,
+      salt,
+      iterations,
+      64,
+      'sha512',
+      (err, derivedKey) => {
+        if (err) {
+          reject(err)
+          return
+        }
 
-    const key = derivedKey.toString('hex')
+        const key = derivedKey.toString('hex')
 
-    resolve(key)
-  });
-})
+        resolve(key)
+      }
+    )
+  })
 
-module.exports = { saltPassword, verifyPassword };
+module.exports = { saltPassword, verifyPassword }

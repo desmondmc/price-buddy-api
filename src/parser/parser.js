@@ -13,7 +13,7 @@ const scraperShopMap = {
 const sanitizeUrl = (url) => {
   const shop = shopFromUrl(url)
   if (shop === 'not_supported') {
-    console.log("Shop not supported 😱")
+    console.log('Shop not supported 😱')
     return
   }
 
@@ -25,7 +25,7 @@ const sanitizeUrl = (url) => {
 const scrapeProductData = (url) => {
   const shop = shopFromUrl(url)
   if (shop === 'not_supported') {
-    console.log("Shop not supported 😱")
+    console.log('Shop not supported 😱')
     return
   }
 
@@ -39,10 +39,11 @@ const command = process.argv[2]
 const url = process.argv[3]
 
 switch (command) {
-  case 'sanitize':
-    sanitizeUrl(url)
-    break;
-  case 'scrape':
-    scrapeProductData(url)
-    break;
+case 'sanitize':
+  sanitizeUrl(url)
+  break
+
+case 'scrape':
+  scrapeProductData(url)
+  break
 }
