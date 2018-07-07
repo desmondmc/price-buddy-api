@@ -19,33 +19,33 @@ function getCurrency (url){
   return currency_mapping[tld]
 }
 
-const parse = (url_string) => {
-  const currency = getCurrency (url_string)
-  request(url_string, function (error, response, html) {
-    const parsed_data = { image : '', name : '', amount : '', currency : currency, shop: 'Otto', url_string }
+const parse = (url) => {
+  const currency = getCurrency (url)
+  request(url, function (error, response, html) {
+    const parsed_data = { image : '', name : '', amount : '', currency : currency, shop: 'Otto', url }
 
     if (!error && response.statusCode == 200) {
       const $ = cheerio.load(html)
 
-      $(titleClass).filter(() => {
+      $(titleClass).filter(function(){
         const data = $(this)
         parsed_data.name=data.children('h1').text().trim()
       })
 
-      $(reducedPriceID).filter(() => {
+      $(reducedPriceID).filter(function(){
         const data = $(this)
         parsed_data.amount=currencyFormatter.unformat(data.text(),{code : currency})
       })
 
       //if the proce is not reduced
       if(parsed_data.amount==''){
-        $(priceID).filter(() => {
+        $(priceID).filter(function(){
           const data = $(this)
           parsed_data.amount=currencyFormatter.unformat(data.text(),{code : currency})
         })
       }
 
-      $(imgID).filter(() => {
+      $(imgID).filter(function(){
         const data = $(this)
         parsed_data.image=data.attr(imgAttribute)
       })
