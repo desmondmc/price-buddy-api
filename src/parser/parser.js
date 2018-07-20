@@ -29,6 +29,7 @@ const scrapeProductData = (url) => {
     return
   }
 
+  //maybe we dont need so sanitize before if we are constantly sending the clean url
   const scraper = scraperShopMap[shop]
   const sanitizer = sanitizerShopMap[shop]
   const cleanUrl = sanitizer(url)

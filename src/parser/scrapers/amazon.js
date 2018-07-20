@@ -37,7 +37,7 @@ const parse = (url) => {
   //for amazon we need the product id, but maybe we can in general just cut the other get parameters out of the url
   const currency = getCurrency(url)
   request(url, function (error, response, html) {
-    var parsed_data = { image : '', name : '', amount : '', currency : currency, shop: 'Amazon', url }
+    const parsed_data = { image : '', name : '', amount : '', currency : currency, shop: 'Amazon', url }
 
     // we need this for debugging
     /*
