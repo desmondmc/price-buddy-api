@@ -33,7 +33,7 @@ const { verifyPassword } = require('../utils/salter')
 const login = async (req, res) => {
   const { email, password: passwordAttempt } = req.body
 
-  const result = await db.query(`SELECT * FROM public.user WHERE email='${email}'`)
+  const result = await db.query(`SELECT * FROM public.user WHERE email=$1`, [email])
 
   if (result.rowCount <= 0) {
     res.status(404).send({ error: 'InvalidEmailOrPassword' })
@@ -56,8 +56,9 @@ const login = async (req, res) => {
   await db.query(
     `
     UPDATE "public"."user" 
-    SET "last_login_date" = '${now}' WHERE email='${email}'
-    `
+    SET "last_login_date" = $1 WHERE email=$2
+    `,
+    [now, email]
   )
 
   res.send({

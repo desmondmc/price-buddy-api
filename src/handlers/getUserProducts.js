@@ -47,10 +47,10 @@ const getUserProducts = async (req, res) => {
     ON public.user.id=user_product_mapping.user_id
     JOIN price
     ON price.product_id=product.id
-    WHERE user_product_mapping.user_id='${req.userId}';
+    WHERE user_product_mapping.user_id=$1;
   `
 
-  const result = await db.query(userProducts)
+  const result = await db.query(userProducts, [req.userId])
 
   const responseObject = result.rows.map(r => ({
     id: r.id,

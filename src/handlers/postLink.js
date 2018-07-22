@@ -36,14 +36,15 @@ const postLink = async (req, res) => {
   const { link } = req.body
 
   try {
-    const { stdout, stderr } = await exec(`node ./src/parser/index.js ${link}`)
-    
+    const { stdout, stderr } = await exec(`node ./src/parser/parser.js scrape ${link}`)
+
     if (stderr) {
+      console.log(stderr)
       res.status(406).send({ error: 'UnparseableLink' })
       return
     }
 
-    const { 
+    const {
       image,
       name,
       amount,
@@ -56,44 +57,66 @@ const postLink = async (req, res) => {
     const priceId = uuid()
     const userId = req.userId
     const userProductMappingId = uuid()
-    
+
     const now = moment().format()
 
-    const insertProduct = 
-    `
-      INSERT INTO product 
-      (id, name, url, image, shop) 
-      VALUES 
-      ('${productId}','${name}', '${url}', '${image}', '${shop}');
-    `
 
-    const insertPrice = 
-    `
-      INSERT INTO price
-      (id, amount, currency, created, product_id) 
-      VALUES 
-      ('${priceId}','${amount}', '${currency}', '${now}', '${productId}');
-    `
+    const insertProduct = {
+      text:
+        `
+        INSERT INTO product 
+        (id, name, url, image, shop) 
+        VALUES 
+        ($1,$2,$3,$4,$5);
+        `,
+      values: [productId, name, url, image, shop],
+    }
 
-    const insertUserProductMapping =
-    `
-      INSERT INTO user_product_mapping
-      (id, user_id, product_id, created) 
-      VALUES 
-      ('${userProductMappingId}','${userId}', '${productId}', '${now}');
-    `
+    const insertPrice = {
+      text:
+        `
+        INSERT INTO price
+        (id, amount, currency, created, product_id) 
+        VALUES 
+        ($1,$2,$3,$4,$5);
+        `,
+      values: [priceId, amount, currency, now, productId],
+    }
 
-    const query = userId
-      ? `${insertProduct}${insertPrice}${insertUserProductMapping}`
-      : `${insertProduct}${insertPrice}`
+    const insertUserProductMapping = {
+      text:
+        `
+        INSERT INTO user_product_mapping
+        (id, user_id, product_id, created) 
+        VALUES 
+        ($1,$2,$3,$4);
+        `,
+      values: [userProductMappingId, userId, productId, now]
+    }
 
-    await db.query(query)
+    try {
+      await db.query('BEGIN')
+      await db.query(insertProduct)
+      await db.query(insertPrice)
+      await db.query(insertUserProductMapping)
+      await db.query('COMMIT')
+    } catch(e) {
+      console.log('Error saving link to db: ', e)
+      await db.query('ROLLBACK')
+      throw e
+    }
 
     res.send({ product_id: productId })
-  } catch(e) {
+  } catch (e) {
     console.log('Error saving link: ', e)
     res.status(500).send({ error: 'ShopRequestFailure' })
   }
+}
+
+const _insertProductWithUser = ({
+
+}) => {
+
 }
 
 module.exports = postLink

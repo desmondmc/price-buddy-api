@@ -56,10 +56,12 @@ const signup = async (req, res) => {
     INSERT INTO public.user 
     (id, email, auth_token, registration_date, last_login_date, password, salt, iterations) 
     VALUES 
-    ('${id}','${email}', '${authToken}', '${now}', '${now}', '${hash}', '${salt}', ${iterations})
+    ($1,$2,$3,$4,$5,$6,$7,$8)
     `
 
-  await db.query(insertNewUser)
+  const params = [id, email, authToken, now, now, hash, salt, iterations]
+
+  await db.query(insertNewUser, params)
 
   // TODO If there is a product id, create a relationship between the product and 
 

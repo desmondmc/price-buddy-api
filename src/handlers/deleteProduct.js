@@ -28,8 +28,9 @@ const deleteProduct = async (req, res) => {
   await db.query(
     `
     DELETE FROM product
-    WHERE id='${product_id}'
-    `
+    WHERE id=$1
+    `,
+    [product_id]
   )
 
   res.send()

@@ -23,8 +23,9 @@ const emailAvailability = async (req, res) => {
   const result = await db.query(
     `
     SELECT * FROM public.user
-    WHERE email='${email}'
-    `
+    WHERE email=$1
+    `,
+    [email]
   )
 
   res.send({

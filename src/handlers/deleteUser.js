@@ -29,8 +29,9 @@ const deleteUser = async (req, res) => {
   await db.query(
     `
     DELETE FROM public.user
-    WHERE id='${req.userId}'
-    `
+    WHERE id=$1
+    `,
+    [req.userId]
   )
 
   res.send()
