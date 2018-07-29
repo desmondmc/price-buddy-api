@@ -1,5 +1,5 @@
-const { exec } = require('child_process')
-const async = require('async')
+const util = require('util')
+const exec = util.promisify(require('child_process').exec)
 
 const test_amazon = [{
   'country' : 'germany',
@@ -34,7 +34,7 @@ const test_amazon = [{
     },
     {
       'type': 'multiple_normal',
-      'url': 'https://www.amazon.com/Goozler-Dunder-Mifflin-Company-T-Shirt/dp/B07CYCPHRM/ref=sr_1_10?s=apparel&ie=UTF8&qid=1532036968&sr=1-10&nodeID=7141123011&psd=1&keywords=t-shirt'
+      'url': 'https://www.amazon.com/Goozler-Dunder-Mifflin-Company-T-Shirt/dp/B07CYCKGLW/ref=sr_1_10?s=apparel&ie=UTF8&qid=1532036968&sr=1-10&nodeID=7141123011&psd=1&keywords=t-shirt&th=1&psc=1'
     },
     {
       'type': 'multiple_reduced',
@@ -70,56 +70,54 @@ const ShopMap = {
   'otto': test_otto,
 }
 
-const run_parser = (link) => {
+const run_parser = async (shopcountry,link) => {
 
+  const { stdout, stderr, error } = await exec(`node ../src/parser/parser.js scrape ${link.url}`)
 
-  exec(`node ../src/parser/parser.js scrape ${link.url}`, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`exec error: ${error}`)
-      return
-    }
-    let test_results = ''
-    const { 
-      image,
-      name,
-      amount,
-      currency,
-      shop,
-      url
-    } = JSON.parse(stdout)
+  if (error) {
+    console.error(`exec error: ${error}`)
+    return
+  }
 
-    if(!image){
-      test_results += '!no image;'
-    }
-    if(!name){
-      test_results += '!no name;'
-    }
-    if(!amount){
-      test_results += '!no amount;'
-    }
-    if(!currency){
-      test_results += '!no currency;'
-    }
-    if(!shop){
-      test_results += '!no shop;'
-    }
+  let test_results = ''
+  const { 
+    image,
+    name,
+    amount,
+    currency,
+    shop,
+    url
+  } = JSON.parse(stdout)
 
-    if(!test_results){
-      test_results += 'test passed;'
-    }
-    console.log(link.type+':'+test_results)
-  })
+  if(!image){
+    test_results += '!no image;⚠️'
+  }
+  if(!name){
+    test_results += '!no name;❌'
+  }
+  if(!amount){
+    test_results += '!no amount;❌'
+  }
+  if(!currency){
+    test_results += '!no currency;❌'
+  }
+  if(!shop){
+    test_results += '!no shop;❌'
+  }
 
+  if(!test_results){
+    test_results += 'test passed;✅'
+  }
+  console.log(shopcountry+'-'+link.type+':'+test_results)
 }
 
 const test_shop = (shoplist) =>{
 
-  shoplist.forEach(async function(shop){
+  shoplist.forEach(function(shop){
     //why is this not working?
-    await ShopMap[shop].forEach(function(item){
-      console.log(shop+'-'+item.country)
-      item.links.forEach(function(link){
-        run_parser(link)
+    ShopMap[shop].forEach(function(item){
+      item.links.forEach(function(link) {
+        run_parser(shop+'-'+item.country,link)
       })
     })
   })
